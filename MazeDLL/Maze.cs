@@ -9,7 +9,7 @@ namespace MazeDLL
     public class Maze
     {
         Random random;
-        private Room[,] rooms = null;
+        public Room[,] Rooms = null;
         private Position beginPos = null;
         private Position endPos = null;
         public void Generate(int x, int y, int fillPercent = 100, int randomSeed = -1)
@@ -23,18 +23,23 @@ namespace MazeDLL
                 random = new Random();
             }
 
-            rooms = new Room[x, y];
+            Rooms = new Room[x, y];
 
-            List<Position> path = CreateMazePath(rooms);
+            List<Position> path = CreateMazePath(Rooms);
             beginPos = path[0];
             endPos = path[path.Count - 1];
 
-            BuildRestOfRooms(rooms, fillPercent);
-
-            //foreach (var item in rooms)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            //BuildRestOfRooms(Rooms, fillPercent);
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    if (Rooms[i, j] == null)
+                    {
+                        Rooms[i, j] = new Room();
+                    }
+                }
+            }
         }
 
 
@@ -60,7 +65,7 @@ namespace MazeDLL
                     break;
             }
             //string dir = direction.ToString().Substring(0, 1);
-            rooms[x, y] = RoomDictionary.GetRoom(rooms[x, y].ToString() + dir);
+            Rooms[x, y] = RoomDictionary.GetRoom(Rooms[x, y].ToString() + dir);
 
             try
             {
@@ -73,36 +78,36 @@ namespace MazeDLL
                             mazeEnds = true;
                             break;
                         }
-                        if (rooms[x, y] == null)
+                        if (Rooms[x, y] == null)
                         {
-                            rooms[x, y] = RoomDictionary.GetRoom("");
+                            Rooms[x, y] = RoomDictionary.GetRoom("");
                             OpenDoor(x, y, Directions.Direction.South);
                         }
                         break;
                     case Directions.Direction.South:
                         y = y + 1;
-                        if (y >= rooms.GetLength(1))
+                        if (y >= Rooms.GetLength(1))
                         {
                             mazeEnds = true;
                             break;
                         }
-                        if (rooms[x, y] == null)
+                        if (Rooms[x, y] == null)
                         {
-                            rooms[x, y] = RoomDictionary.GetRoom("");
+                            Rooms[x, y] = RoomDictionary.GetRoom("");
                             OpenDoor(x, y, Directions.Direction.North);
                         }
 
                         break;
                     case Directions.Direction.East:
                         x = x + 1;
-                        if (x >= rooms.GetLength(0))
+                        if (x >= Rooms.GetLength(0))
                         {
                             mazeEnds = true;
                             break;
                         }
-                        if (rooms[x, y] == null)
+                        if (Rooms[x, y] == null)
                         {
-                            rooms[x, y] = RoomDictionary.GetRoom("");
+                            Rooms[x, y] = RoomDictionary.GetRoom("");
                             OpenDoor(x, y, Directions.Direction.West);
 
                         }
@@ -115,9 +120,9 @@ namespace MazeDLL
                             break;
                         }
 
-                        if (rooms[x, y] == null)
+                        if (Rooms[x, y] == null)
                         {
-                            rooms[x, y] = RoomDictionary.GetRoom("");
+                            Rooms[x, y] = RoomDictionary.GetRoom("");
                             OpenDoor(x, y, Directions.Direction.East);
                         }
                         break;
@@ -135,9 +140,9 @@ namespace MazeDLL
         public void CloseDoor(int x, int y, Directions.Direction direction)
         {
             string dir = direction.ToString().Substring(0, 1);
-            string key = rooms[x, y].ToString();
+            string key = Rooms[x, y].ToString();
             key = key.Replace(dir, "");
-            rooms[x, y] = RoomDictionary.GetRoom(key);
+            Rooms[x, y] = RoomDictionary.GetRoom(key);
         }
 
 
@@ -165,11 +170,29 @@ namespace MazeDLL
                 }
             }
 
-            //beginX = 0;
-            //beginY = 0;
 
             Room room = new Room();
             rooms[beginX, beginY] = room;
+
+            //open the door to the maze
+            if (beginX == 0)
+            {
+                room.Open(Directions.Direction.West);
+            }
+            else if (beginY == 0)
+            {
+                room.Open(Directions.Direction.North);  //y is reversed
+            }
+            else if (beginX == rooms.GetLength(0) - 1)
+            {
+                room.Open(Directions.Direction.East);
+            }
+            else if (beginY == rooms.GetLength(1) - 1)
+            {
+                room.Open(Directions.Direction.South);  //y is reversed
+            }
+
+
             Position beginPosition = new Position(beginX, beginY);
             path.Add(beginPosition);
 
@@ -182,6 +205,7 @@ namespace MazeDLL
             }
 
             path.Remove(path.Last());
+
             return path;
         }
 

@@ -7,10 +7,10 @@ namespace MazeDLL
 {
     public class Room
     {
-        private bool North = false;
-        private bool South = false;
-        private bool East = false;
-        private bool West = false;
+        public bool North = false;
+        public bool South = false;
+        public bool East = false;
+        public bool West = false;
 
         internal void Open(Directions.Direction direction)
         {

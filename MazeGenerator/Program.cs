@@ -6,7 +6,7 @@ namespace MazeGenerator
 {
     class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             for (int x = 0; x < 1; x++)
             {
@@ -14,11 +14,17 @@ namespace MazeGenerator
                 sw.Start();
                 Maze maze = new Maze();
 
-                maze.Generate(10, 10, 50);
+                maze.Generate(10, 10, 100);
                 sw.Stop();
+                Console.WriteLine(sw.ElapsedMilliseconds);
 
+                sw.Restart();
+                Picture mazeDrawer = new Picture();
+                mazeDrawer.Draw(maze);
+                sw.Stop();
                 Console.WriteLine(sw.ElapsedMilliseconds);
             }
         }
     }
 }
+
